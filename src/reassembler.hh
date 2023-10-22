@@ -31,4 +31,14 @@ public:
 
   // How many bytes are stored in the Reassembler itself?
   uint64_t bytes_pending() const;
+
+  Reassembler();
+
+private:
+  uint64_t _first_unassembled_index;
+  uint64_t _first_unacceptable_index;
+  std::deque<char> _reassembleBuf;
+  std::deque<char> _flagBuf;
+  uint64_t _endIndex;
+  bool _init_flag;
 };
