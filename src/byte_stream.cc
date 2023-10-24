@@ -4,89 +4,92 @@
 
 using namespace std;
 
-ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ), _buf(), _pushedBytes( 0 ), _poppedBytes( 0 ), _isError( 0 ), _isClosed( 0 ) {}
+ByteStream::ByteStream( uint64_t capacity ) : 
+  capacity_( capacity ), 
+  buffer_(""), 
+  closed_(false),
+  error_(false),
+  pushedBytes_(0),
+  popedBytes_(0),
+  buffer_size_(0)
+    {}
 
 void Writer::push( string data )
 {
   // Your code here.
   (void)data;
 
-  for (auto i : data) {
-    if(available_capacity() > 0 ) {
-      _buf.push(i);
-      _pushedBytes++;
-    }
-  }
+  uint64_t write_size = capacity_ - buffer_size_ >= data.size() ? data.size() : capacity_ - buffer_size_;
+  buffer_ += data.substr(0, write_size);
+  pushedBytes_ += write_size;
+  buffer_size_ += write_size;
+
 }
 
 void Writer::close()
 {
   // Your code here.
-  _isClosed = true;
+  closed_ = true;
 }
 
 void Writer::set_error()
 {
   // Your code here.
-  _isError = true;
+  error_ = true;
 }
 
 bool Writer::is_closed() const
 {
   // Your code here.
-  return {_isClosed};
+  return {closed_};
 }
 
 uint64_t Writer::available_capacity() const
 {
   // Your code here.
-  return {capacity_ - _buf.size()};
+  return {capacity_ - buffer_size_};
 }
 
 uint64_t Writer::bytes_pushed() const
 {
   // Your code here.
-  return {_pushedBytes};
+  return {pushedBytes_};
 }
 
 string_view Reader::peek() const
 {
   // Your code here.
-  return {string_view(&_buf.front(),1)};
+  return buffer_;
 }
 
 bool Reader::is_finished() const
 {
   // Your code here.
-  if (bytes_buffered() == 0 && _isClosed == true)
-    return true;
-  else 
-    return false;
+  return bytes_buffered() == 0 && closed_;
 }
 
 bool Reader::has_error() const
 {
   // Your code here.
-  return _isError;
+  return error_;
 }
 
 void Reader::pop( uint64_t len )
 {
   // Your code here.
-  while (len--) {
-    _buf.pop();
-    _poppedBytes++;
-  }
+  buffer_ = buffer_.erase(0,len);
+  popedBytes_ += len;
+  buffer_size_ -= len;
 }
 
 uint64_t Reader::bytes_buffered() const
 {
   // Your code here.
-  return _buf.size();
+  return buffer_size_;
 }
 
 uint64_t Reader::bytes_popped() const
 {
   // Your code here.
-  return _poppedBytes;
+  return  popedBytes_;
 }

@@ -7,18 +7,23 @@
 
 class Reader;
 class Writer;
+class myQueue {
 
+private:
+  
+};
 class ByteStream
 {
 protected:
   uint64_t capacity_;
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
 
-  std::queue<char> _buf; // 考虑使用队列作为stream buffer的底层数据结构，因为字节流需要先进先出
-  size_t _pushedBytes; // 记录push的字节数
-  size_t _poppedBytes; // 记录pop的字节数
-  bool _isError;
-  bool _isClosed;
+  std::string buffer_;
+  bool closed_;
+  bool error_;
+  uint64_t pushedBytes_;
+  uint64_t popedBytes_;
+  uint64_t buffer_size_;
 
 public:
   explicit ByteStream( uint64_t capacity );
