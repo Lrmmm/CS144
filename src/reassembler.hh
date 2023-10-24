@@ -33,12 +33,21 @@ public:
   uint64_t bytes_pending() const;
 
   Reassembler();
+  struct Node {
+    char ch;
+    bool flag;
+    Node():ch(0),flag(false) {}
+  };
 
 private:
   uint64_t _first_unassembled_index;
   uint64_t _first_unacceptable_index;
-  std::deque<char> _reassembleBuf;
-  std::deque<char> _flagBuf;
+  std::vector<Node> buffer;
+  uint64_t front;
+  uint64_t capacity;
+  // std::deque<char> _reassembleBuf;
+  // std::deque<char> _flagBuf;
   uint64_t _endIndex;
   bool _init_flag;
+  bool _end;
 };
